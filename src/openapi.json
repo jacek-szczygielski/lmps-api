@@ -1,0 +1,1670 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LMPS-API 1.0",
+    "description": "This is a wip API for the LMPS and external ressources.",
+    "termsOfService": "https://www.mac.de/en/terms-and-conditions/",
+    "contact": {
+      "email": "marius.kehl@mac.de"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "github",
+    "url": "http://github.com/mac./"
+  },
+  "servers": [
+    {
+      "url": "https://api.mac.de/api/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "https://dev.api.mac.de/api/v1",
+      "description": "Development server"
+    },
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "project",
+      "description": "Everything about projects",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://github.com/mac./lmps-api"
+      }
+    },
+    {
+      "name": "customer",
+      "description": "Everything about customers",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://github.com/mac./lmps-api"
+      }
+    },
+    {
+      "name": "event",
+      "description": "Everything about events",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://github.com/mac./lmps-api"
+      }
+    }
+  ],
+  "paths": {
+    "/projects": {
+      "get": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Get all projects",
+        "description": "Returns all projects.\nThis endpoint is paginated.",
+        "operationId": "getProjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "The field to sort by.\nDefaults to id.",
+            "required": false,
+            "explode": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "example": "id",
+                  "enum": [
+                    "id",
+                    "event_id",
+                    "project_number",
+                    "status",
+                    "af_date",
+                    "ag_date",
+                    "au_date",
+                    "customer_id",
+                    "costunit_id",
+                    "title",
+                    "description",
+                    "area",
+                    "depth",
+                    "hall_number",
+                    "width",
+                    "booth_number",
+                    "booth_type",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "default": [
+                    "id"
+                  ]
+                },
+                "order": {
+                  "type": "string",
+                  "example": "asc",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "explode": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "minProperties": 0,
+              "properties": {
+                "event_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "project_number": {
+                  "type": "string",
+                  "example": 1234
+                },
+                "status": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "enum",
+                    "example": "in progress",
+                    "enum": [
+                      "AN",
+                      "AG",
+                      "AF",
+                      "OE",
+                      "AU",
+                      "XX"
+                    ]
+                  }
+                },
+                "af_date": {
+                  "$ref": "#/components/schemas/DateFilter"
+                },
+                "ag_date": {
+                  "$ref": "#/components/schemas/DateFilter"
+                },
+                "au_date": {
+                  "$ref": "#/components/schemas/DateFilter"
+                },
+                "customer_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "costunit_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "title": {
+                  "$ref": "#/components/schemas/StringFilter"
+                },
+                "description": {
+                  "$ref": "#/components/schemas/StringFilter"
+                },
+                "booth_number": {
+                  "$ref": "#/components/schemas/StringFilter"
+                },
+                "created_at": {
+                  "$ref": "#/components/schemas/DateFilter"
+                },
+                "updated_at": {
+                  "$ref": "#/components/schemas/DateFilter"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Project"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "projects.read",
+              "projects.read.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Create a project",
+        "description": "Creates a project.",
+        "operationId": "createProject",
+        "requestBody": {
+          "description": "Project object\ndatabase_name: Projekt",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "projects.write",
+              "projects.write.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Get a project",
+        "description": "Returns a project.",
+        "operationId": "getProject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "projects.read",
+              "projects.read.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Update a project",
+        "description": "Updates a project.",
+        "operationId": "updateProject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "description": "Project object\ndatabase_name: Projekt",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "projects.write",
+              "projects.write.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Delete a project",
+        "description": "Deletes a project.",
+        "operationId": "deleteProject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful response"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "projects.delete"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      }
+    },
+    "/customers": {
+      "get": {
+        "tags": [
+          "customer"
+        ],
+        "summary": "Get customers",
+        "description": "Returns a list of customers.",
+        "operationId": "getCustomers",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "explode": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "minProperties": 0,
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "example": "name",
+                  "enum": [
+                    "name.short_name",
+                    "name.name0",
+                    "name.name1",
+                    "name.name2",
+                    "created_at",
+                    "updated_at"
+                  ]
+                },
+                "order": {
+                  "type": "string",
+                  "example": "asc",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "explode": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "minProperties": 0,
+              "properties": {
+                "name": {
+                  "$ref": "#/components/schemas/StringFilter"
+                },
+                "created_at": {
+                  "$ref": "#/components/schemas/DateFilter"
+                },
+                "updated_at": {
+                  "$ref": "#/components/schemas/DateFilter"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Customer"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "customers.read",
+              "customers.read.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "customer"
+        ],
+        "summary": "Create a customer",
+        "description": "Creates a customer.",
+        "operationId": "createCustomer",
+        "requestBody": {
+          "description": "Customer object\ndatabase_name: Kunde",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "customers.write",
+              "customers.write.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      }
+    },
+    "/customers/{id}": {
+      "get": {
+        "tags": [
+          "customer"
+        ],
+        "summary": "Get a customer",
+        "description": "Returns a customer.",
+        "operationId": "getCustomer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "customers.read",
+              "customers.read.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "customer"
+        ],
+        "summary": "Update a customer",
+        "description": "Updates a customer.",
+        "operationId": "updateCustomer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "description": "Customer object\ndatabase_name: Kunde",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "customers.write",
+              "customers.write.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "customer"
+        ],
+        "summary": "Delete a customer",
+        "description": "Deletes a customer.",
+        "operationId": "deleteCustomer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful response"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "customers.delete"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      }
+    },
+    "/events": {
+      "get": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Get events",
+        "description": "Returns a list of events.",
+        "operationId": "getEvents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "explode": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "minProperties": 0,
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "example": "name",
+                  "enum": [
+                    "name.short_name",
+                    "name.name0",
+                    "name.name1",
+                    "name.name2",
+                    "created_at",
+                    "updated_at"
+                  ]
+                },
+                "order": {
+                  "type": "string",
+                  "example": "asc",
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "explode": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "minProperties": 0,
+              "properties": {
+                "name": {
+                  "$ref": "#/components/schemas/StringFilter"
+                },
+                "created_at": {
+                  "$ref": "#/components/schemas/DateFilter"
+                },
+                "updated_at": {
+                  "$ref": "#/components/schemas/DateFilter"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Event"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "events.read",
+              "events.read.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Create an event",
+        "description": "Creates an event.",
+        "operationId": "createEvent",
+        "requestBody": {
+          "description": "Event object\ndatabase_name: Veranstaltung",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "events.write",
+              "events.write.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Get an event",
+        "description": "Returns an event.",
+        "operationId": "getEvent",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "events.read",
+              "events.read.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Update an event",
+        "description": "Updates an event.",
+        "operationId": "updateEvent",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "description": "Event object\ndatabase_name: Veranstaltung",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "events.write",
+              "events.write.all"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "event"
+        ],
+        "summary": "Delete an event",
+        "description": "Deletes an event.",
+        "operationId": "deleteEvent",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful response"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorBadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorNotFound"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "events.delete"
+            ]
+          },
+          {
+            "lmpsLegacy": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Project": {
+        "type": "object",
+        "description": "Project object\ndatabase_name: Projekt",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "readOnly": true,
+            "nullable": false,
+            "maxLength": 36
+          },
+          "event_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "maxLength": 36
+          },
+          "project_number": {
+            "type": "string",
+            "example": 1234,
+            "maxLength": 3
+          },
+          "status": {
+            "type": "string",
+            "format": "enum",
+            "example": "in progress",
+            "maxLength": 2,
+            "maxItems": 1,
+            "enum": [
+              "AN",
+              "AG",
+              "AF",
+              "OE",
+              "AU",
+              "XX"
+            ],
+            "description": "AN = Request (Anfrage)\nAG = Offer (Angebot)\nAF = Order (Auftrag)\nOE = Open items (Offene Posten)\nAU = Completed (Abgeschlossen)\nXX = Canceled (Storniert)"
+          },
+          "af_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-01-01T00:00:00.000Z",
+            "nullable": true
+          },
+          "ag_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-01-01T00:00:00.000Z",
+            "nullable": true
+          },
+          "au_date": {
+            "type": "string",
+            "format": "date",
+            "example": "2020-01-01T00:00:00.000Z",
+            "nullable": true
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "maxLength": 36
+          },
+          "costunit_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "maxLength": 36
+          },
+          "title": {
+            "type": "string",
+            "example": "Test Project",
+            "maxLength": 60
+          },
+          "description": {
+            "type": "string",
+            "example": "Test Project",
+            "description": "This field can be pretty long as it is a \"clob\" in the database"
+          },
+          "area": {
+            "type": "number",
+            "format": "float",
+            "example": 1234.56
+          },
+          "depth": {
+            "type": "number",
+            "format": "float",
+            "example": 1234.56
+          },
+          "hall_number": {
+            "type": "string",
+            "example": 1234,
+            "maxLength": 4
+          },
+          "width": {
+            "type": "number",
+            "format": "float",
+            "example": 1234.56
+          },
+          "booth_number": {
+            "type": "string",
+            "example": 1234,
+            "maxLength": 10
+          },
+          "booth_type": {
+            "type": "string",
+            "format": "enum",
+            "maxLength": 5,
+            "enum": [
+              "KOPF",
+              "REIHE",
+              "ZELT",
+              "BLOCK",
+              "KEINE",
+              "ECK",
+              "PARTN"
+            ],
+            "description": "KOPF = Head-booth (Kopfstand)\nREIHE = Row-booth (Reihenstand)\nZELT = Tent-booth (Zeltstand)\nBLOCK = Block-booth (Blockstand)\nKEINE = not specified (keine Angabe)\nECK = Corner-booth (Eckstand)\nPARTN = Partner-booth (Partnerstand)",
+            "example": "KOPF"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "description": "Customer object\ndatabase_name: Kunde",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "readOnly": true,
+            "nullable": false,
+            "maxLength": 36
+          },
+          "name": {
+            "type": "object",
+            "properties": {
+              "short_name": {
+                "type": "string",
+                "nullable": false,
+                "example": "BACCUS",
+                "maxLength": 15,
+                "description": "database_name: Bez"
+              },
+              "name0": {
+                "type": "string",
+                "nullable": true,
+                "example": "Baccus Weinhaus",
+                "maxLength": 30,
+                "description": "database_name: Anrede"
+              },
+              "name1": {
+                "type": "string",
+                "nullable": true,
+                "maxLength": 45,
+                "example": "Graf Eltz GmbH"
+              },
+              "name2": {
+                "type": "string",
+                "nullable": true,
+                "maxLength": 45,
+                "example": "Schloß Reinhartshausen"
+              }
+            }
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "Test Product",
+              "maxLength": 240
+            }
+          },
+          "sales": {
+            "type": "string",
+            "example": "idk //TODO"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Location": {
+        "type": "object",
+        "description": "Location object\ndatabase_info: this doesnt exist in that way. could be generated by the api at runtime until impl in database is possible.\n",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "readOnly": true,
+            "nullable": false,
+            "deprecated": true,
+            "maxLength": 36
+          },
+          "type": {
+            "type": "string",
+            "format": "enum",
+            "enum": [
+              "customer",
+              "site",
+              "exhibition"
+            ],
+            "example": "customer"
+          },
+          "title": {
+            "type": "string",
+            "example": "Test Location"
+          },
+          "street": {
+            "type": "string",
+            "example": "Test Street",
+            "maxLength": 45
+          },
+          "zip": {
+            "type": "string",
+            "example": 12345,
+            "maxLength": 6
+          },
+          "city": {
+            "type": "string",
+            "example": "Test City",
+            "maxLength": 45
+          },
+          "country": {
+            "type": "string",
+            "example": "Test Country",
+            "maxLength": 45
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "description": "Represents a contact for a person or a site.\ndatabase_info: this doesnt exist in that way. could be generated by the api at runtime until impl in database is possible.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "readOnly": true,
+            "nullable": false,
+            "deprecated": true
+          },
+          "type": {
+            "type": "string",
+            "format": "enum",
+            "enum": [
+              "person",
+              "site"
+            ],
+            "example": "person"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "maxLength": 45
+          },
+          "phone": {
+            "type": "string",
+            "example": "+49-1234-567890",
+            "maxLength": 30
+          },
+          "fax": {
+            "type": "string",
+            "example": "+49-1234-567890",
+            "maxLength": 30
+          },
+          "postbox": {
+            "type": "string",
+            "example": 12345,
+            "maxLength": 30
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@cars.com",
+            "maxLength": 60
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "description": "Event object\ndatabase_name: Messe",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "readOnly": true,
+            "nullable": false,
+            "maxLength": 36
+          },
+          "event_id": {
+            "type": "string",
+            "example": 12345,
+            "maxLength": 5
+          },
+          "title": {
+            "type": "string",
+            "example": "Test Event",
+            "maxLength": 30
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "maxLength": 36
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "revision": {
+            "type": "number",
+            "format": "int32",
+            "example": 1
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "cancel_state": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "canceled": {
+                "type": "boolean",
+                "example": true
+              },
+              "canceled_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2020-01-01T00:00:00.000Z"
+              },
+              "reason": {
+                "type": "string",
+                "example": "Test Reason"
+              },
+              "alternative_event_id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "123e4567-e89b-12d3-a456-426614174000",
+                "maxLength": 36
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "nullable": false,
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "example": "Test Item",
+            "nullable": false
+          },
+          "photoUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "url1",
+              "url2"
+            ],
+            "nullable": true,
+            "deprecated": true
+          }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1,
+                "description": "Total number of items available"
+              },
+              "count": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1,
+                "description": "Number of items returned"
+              },
+              "per_page": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1,
+                "description": "Number of items per page"
+              },
+              "current_page": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1,
+                "description": "Current page"
+              },
+              "total_pages": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1,
+                "description": "Total number of pages"
+              },
+              "links": {
+                "type": "object",
+                "properties": {
+                  "previous": {
+                    "type": "string",
+                    "example": "http://example.com/api/v1/projects?page=1"
+                  },
+                  "next": {
+                    "type": "string",
+                    "example": "http://example.com/api/v1/projects?page=3"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "StringFilter": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "enum",
+            "enum": [
+              "contains",
+              "starts_with",
+              "ends_with",
+              "equals",
+              "like"
+            ],
+            "example": "contains"
+          },
+          "value": {
+            "type": "string",
+            "example": "Test"
+          }
+        }
+      },
+      "DateFilter": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "enum",
+            "enum": [
+              "before",
+              "after",
+              "between"
+            ]
+          },
+          "date": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2020-01-01T00:00:00.000Z"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "page": {
+        "name": "page",
+        "in": "query",
+        "description": "The page number to return.\nDefaults to 1.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "int32",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "description": "The number of items to return per page.\nDefaults to 10.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "int32",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        }
+      },
+      "id": {
+        "name": "id",
+        "in": "path",
+        "description": "The id of the item to retrieve.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "responses": {
+      "ErrorNotFound": {
+        "description": "The requested resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 404
+                },
+                "message": {
+                  "type": "string",
+                  "example": "The requested resource was not found"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2020-01-01T00:00:00.000Z"
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/api/v1/projects/123e4567-e89b-12d3-a456-426614174000"
+                },
+                "lmps-tracking-id": {
+                  "type": "string",
+                  "example": "123e4567-e89b-12d3-a456-426614174000"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorBadRequest": {
+        "description": "The request was invalid or cannot be otherwise served",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 400
+                },
+                "message": {
+                  "type": "string",
+                  "example": "The request was invalid or cannot be otherwise served"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2020-01-01T00:00:00.000Z"
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/api/v1/projects/123e4567-e89b-12d3-a456-426614174000"
+                },
+                "lmps-tracking-id": {
+                  "type": "string",
+                  "example": "123e4567-e89b-12d3-a456-426614174000"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "/oauth/authorize",
+            "tokenUrl": "/oauth/token",
+            "refreshUrl": "/oauth/token",
+            "scopes": {
+              "project.read": "read access to projects a user is assigned to",
+              "project.read.all": "read access to all projects",
+              "project.write": "write access to projects a user is assigned to",
+              "project.write.all": "write access to all projects",
+              "project.delete": "delete access to all projects",
+              "customer.read": "read access to customers a user is assigned to",
+              "customer.read.all": "read access to all customers",
+              "customer.write": "write access to customers a user is assigned to",
+              "customer.write.all": "write access to all customers",
+              "customer.delete": "delete access to all customers",
+              "event.read": "read access to events a user is assigned to",
+              "event.read.all": "read access to all events",
+              "event.write": "write access to events a user is assigned to",
+              "event.write.all": "write access to all events",
+              "event.delete": "delete access to all events"
+            }
+          },
+          "clientCredentials": {
+            "tokenUrl": "/oauth/token",
+            "refreshUrl": "/oauth/token",
+            "scopes": {
+              "project.read": "read access to projects",
+              "project.write": "write access to projects",
+              "project.delete": "delete access to projects",
+              "customer.read": "read access to customers",
+              "customer.write": "write access to customers",
+              "customer.delete": "delete access to customers",
+              "event.read": "read access to events",
+              "event.write": "write access to events",
+              "event.delete": "delete access to events"
+            }
+          }
+        }
+      },
+      "lmpsLegacy": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "This is a legacy access token for the LMPS API.\nIt is used to access the LMPS API from the LMPS classic client.\nThis must be only possible when being \"in the office\".\nThis method MUST NOT BE USED by any other client."
+      }
+    }
+  }
+}
