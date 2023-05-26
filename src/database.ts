@@ -13,7 +13,7 @@ const logger = (sql: string, timing?: number | undefined) => {
     console.log(`SQL${ timing ? ` (${timing.toLocaleString()}ms)` : ""}: ${sql} `)
 }
 
-const logging = process.env.NODE_ENV === "development" ? logger : false;
+const logging = process.env.NODE_ENV === "development" && process.env.DATABASE_LOGGING === "true" ? logger : false;
 
 async function connect(): Promise<Sequelize> {
     const database = new Sequelize({

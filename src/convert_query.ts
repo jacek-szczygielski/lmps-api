@@ -27,7 +27,6 @@ export function convertStringFilter(filter: StringFilter | undefined): DbStringF
 }
 
 export function convertDateFilter(filter: DateFilter | undefined): DbDateFilter | Error | undefined {
-    console.log(filter);
     if (!filter) return undefined;
     if (!filter.date) return new Error("Invalid filter date");
     if ((filter.type === 'between') && (filter.date?.length || 0 >= 2) && (filter.date[0] && filter.date[1])) {

@@ -25,8 +25,6 @@ function ApiNameToDatabaseName(name: string): string {
 }
 
 router.get('/', async(req, res) => {
-    // // print query params (for debugging)
-    // console.log(req.query);
     // parse query params
     const q = req.query as Projects.GetProjects.RequestQuery
     const limit = parseInt(q.limit || "10");
@@ -121,9 +119,6 @@ router.get('/', async(req, res) => {
         return;
     }
 
-    //console.log(q.filter);
-    //console.log(filter);
-
     // get query result
     const query_result = await DbProject.findAll({
         where: filter,
@@ -201,7 +196,6 @@ router.get('/', async(req, res) => {
 
 router.get('/:id', async(req, res) => {
     // get id from url
-    console.log(req.params.id);
     const id = req.params.id;
     // get query result
     const query_result = await DbProject.findByPk(`{${id}}`);
