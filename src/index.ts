@@ -2,6 +2,7 @@ import express from 'express';
 import api from './api';
 import connect from './database';
 import setup_swagger from './setup-swagger';
+import nocache from 'nocache';
 
 const VERSION = 'v1';
 const DEFAULT_API_PATH = `/api/${VERSION}`;
@@ -9,6 +10,8 @@ const DEFAULT_DOCUMENTATION_PATH = `/api-docs/${VERSION}`;
 const PORT = 3000;
 
 const app = express();
+app.set("etag", false);
+app.use(nocache());
 
 // set up swagger
 if (process.env.NODE_ENV === "development") {

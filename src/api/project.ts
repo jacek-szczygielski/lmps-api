@@ -231,6 +231,42 @@ router.get('/:id', async(req, res) => {
     }
 });
 
+// router.post('/', async(req, res) => {
+//     // get request body
+//     const req_body: Project = req.body;
+
+//     // check if request body is valid
+//     if (!req_body) {
+//         res.status(400).send("Request body is empty");
+//         return;
+//     }
+
+//     // create new db object
+//     const new_project: DbProject = {
+//         af_date: req_body.af_date || null,
+//         ag_date: req_body.ag_date,
+//         au_date: req_body.au_date,
+//         booth_number: req_body.booth_number,
+//         costunit_id: req_body.costunit_id,
+//         customer_shortName: req_body.customer_id,
+//         description: , // TODO: add description to model
+//         event_id: req_body.event_id,
+//         id: req_body.id,
+//         project_number: req_body.project_number,
+//         status: req_body.status,
+//         area: req_body.area,
+//         booth_type: req_body.booth_type,
+//         depth: req_body.depth,
+//         hall_number: req_body.hall_number,
+//         title: req_body.title,
+//         width: req_body.width,
+//     };
+//     // save new object
+//     await new_project.save();
+//     // send response
+//     res.status(201).send(new_project);
+// });
+
 export default router;
 
 // Path: src\api\project.ts
