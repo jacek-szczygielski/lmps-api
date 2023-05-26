@@ -12,7 +12,8 @@ const app = express();
 
 // set up swagger
 if (process.env.NODE_ENV === "development") {
-    setup_swagger(app, DEFAULT_DOCUMENTATION_PATH)
+    const redirect_root_to_swagger = (process.env.REDIRECT_ROOT_TO_SWAGGER || "false") === "true";
+    setup_swagger(app, DEFAULT_DOCUMENTATION_PATH, redirect_root_to_swagger)
     console.log(`Swagger will be available on http://localhost:${PORT}${DEFAULT_DOCUMENTATION_PATH}`)
 }
 
