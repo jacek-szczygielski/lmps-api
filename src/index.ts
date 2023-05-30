@@ -11,6 +11,7 @@ const PORT = 3000;
 
 const app = express();
 app.set("etag", false);
+app.set('x-powered-by', false);
 app.use(nocache());
 
 // set up swagger
