@@ -1,4 +1,4 @@
-import express from 'express'
+import { Request, Response } from 'express'
 
 export interface ApiError {
     code: number
@@ -9,25 +9,26 @@ export interface ApiError {
 }
 
 export default class ErrorDispatcher {
-    private req: express.Request
-    private res: express.Response
+    private req: Request
+    private res: Response
     private error: ApiError
     private sysError!: Error
 
-    constructor(req: express.Request, res: express.Response) {
+    constructor(req: Request, res: Response) {
         this.req = req
         this.res = res
         this.error = {
             code: 500,
             message: "Internal server error",
             timestamp: new Date(),
-            path: req.path,
+            path: req.baseUrl,
             lmps_tracking_id: "" // TODO: Generate tracking id
         }
     }
 
     public setSysError(error: Error): ErrorDispatcher {
         this.sysError = error
+        console.error(this)
         return this
     }
 
@@ -43,7 +44,7 @@ export default class ErrorDispatcher {
 
     public itemNotFound(name: string, id: string) {
         this.error.code = 404
-        this.error.message = `The reqquested "${name}" with id "${id}" was not found`
+        this.error.message = `The requested "${name}" with id "${id}" was not found`
         this.send()
     }
 
